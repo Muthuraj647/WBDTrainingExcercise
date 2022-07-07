@@ -1,0 +1,31 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    deployment.kubernetes.io/revision: "1"
+  labels:
+    app: sample-node-app
+  name: sample-node-app
+  namespace: default
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: sample-node-app
+  strategy:
+    rollingUpdate:
+      maxSurge: 25%
+      maxUnavailable: 25%
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        app: sample-node-app
+    spec:
+      containers:
+      - image: muthurajrprivaterepo/sample-node-application:v1
+        imagePullPolicy: IfNotPresent
+        name: sample-node-application
+        resources: {}
+---
+
