@@ -12,7 +12,7 @@ const tableName="Users";
 
 //create table
 
-function createTable(res){
+function createTable(callback){
 
     let processTables=()=>{
         return new Promise((resolve,reject)=>{
@@ -57,23 +57,17 @@ function createTable(res){
         dynamoDB.createTable(params, function(err,data){
             if (err) {
                 console.error("Unable to create table", err);
-                res.json({
-                    message:"Unable to create table"
-                })
+                callback(err,data);
                 
                 } else {
                 console.log("Created table", data);
-                res.json({
-                    message:"Table Created"
-                })
+                callback(err,data);
                 }
         });
 
     }).catch(reason=>{
         console.log(reason);
-        res.json({
-            message:reason
-        })
+        callback(null,reason);
         
     })
         
@@ -82,7 +76,7 @@ function createTable(res){
 
 //adding values
 
-function addUsers(user,res){
+function addUsers(user, callback){
 
     const params={
         TableName: tableName,
@@ -92,25 +86,19 @@ function addUsers(user,res){
     docClient.put(params, function(err,data){
         if (err) {
             console.error("Unable to add User", err);
-            res.json({
-                message:"Unable to add User"
-            });
+            callback(err,data);
             
           } else {
             console.log(`Added ${user.user_name}`);
             const details=data.Item;
-            res.json({
-                message: "User Added",
-                UserDetails: details
-
-            })
+            callback(err,details);
         }
 
     });
 }
 
 
-function getAllUser(res){
+function getAllUser(callback){
     const params={
         TableName: tableName
     };
@@ -118,25 +106,50 @@ function getAllUser(res){
     docClient.scan(params,function(err,data){
     if (err) {
         console.error("Unable to find Users", err);
-        res.json({
-            message:"Unable to List Users"
-        });
+        callback(err,data);
         } else {
         console.log(`Found ${data.Count} Users`);
         console.log(data.Items);
         const Data=data.Items;
-        res.json({
-            message: "User List",
-            UserDetails: Data
-
-        })
+        callback(err,Data);
         }
     });
 }
 
 
+//getUser
+
+function getUserByName(userName, callback){
+
+    const params={
+        TableName: tableName,
+        FilterExpression: "user_name =:name",
+        ExpressionAttributeValues:{
+            ":name":userName
+        },
+        ProjectionExpression: "user_name, password"
+    };
+
+    docClient.scan(params, function(err,data){
+        if(err){
+            console.log("Error with finding the user");
+            callback(err,null);
+        }
+        else{
+            //console.log("Found the User "+data.Items)
+
+            // data.Items.forEach(function(element,index, array){
+            //     console.log(element.user_name+" and Password is "+element.paasword)
+            // });
+            callback(null,data.Items);
+        }
+    });
+
+}
+
 module.exports={
     createTable,
     addUsers,
-    getAllUser
+    getAllUser,
+    getUserByName
 }
