@@ -5,4 +5,8 @@ Required Packages
 
 npm init
 
-npm install --save express body-parser aws-sdk bcryptjs
+npm install --save express body-parser
+
+npm install --save  aws-sdk bcryptjs
+
+npm install --save jsonwebtoke

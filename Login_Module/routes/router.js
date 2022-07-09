@@ -8,5 +8,7 @@ route.get('/createTable',controller.createTable);
 
 route.get('/getAll',controller.getAll)
 
+route.post('/login',controller.getUserByName)
+
 
 module.exports=route;
