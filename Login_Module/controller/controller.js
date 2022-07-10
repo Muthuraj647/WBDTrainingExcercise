@@ -105,7 +105,7 @@ function getUserByName(req,res){
 function changePassword(req,res){
 
     let user={
-        user_name:req.body.user_name,
+        user_name:req.user_name,
         password:req.body.password
     };
   //console.log("Password after encrypt: "+encryptedPwd);
