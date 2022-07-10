@@ -2,7 +2,16 @@ const express=require('express');
 const bcrypt=require('bcryptjs');
 const model=require('../model/dynamoDB');
 const jwt=require('jsonwebtoken');
-const JWTKEY="secretKey";
+const secrets=require('../vault');
+const JWTKEY=secrets.secret.JWTKEY_NODEJS;
+const blocklist=secrets.secret.JWTblocklist;
+const auth=require('../middleware/auth')
+
+function home(req,res){
+    res.json({
+        message: `Hello ${req.user_name} Welcome`
+    })
+}
 
 function createTable(req,res){
     model.createTable(function(err,data){
@@ -18,70 +27,44 @@ function createTable(req,res){
     });
 }
 
-function signup(req,res){
-    let Password=req.body.password;
+function signup(req,res){ 
+    let user={
+        user_name:req.body.user_name,
+        email:req.body.email,
+        password:req.body.password,
+        roles:req.body.roles
+    };
+  //console.log("Password after encrypt: "+encryptedPwd);
 
-    //password validation
-    let regularExpression = /^(?=.*[0-9])(?=.*[!@#$%^&*])[a-zA-Z0-9!@#$%^&*]{6,16}$/;
-    if(!regularExpression.test(Password))
-    {
-        res.json({
-            message:"Password should be Valid"
-        })
-        return;
-    }
-    //console.log("Password before encrypt: "+Password);
-
-    //encrypting
-    bcrypt.hash(Password,5)
-    .then(encryptedPwd=>{
-
-        let user={
-            user_name:req.body.user_name,
-            email:req.body.email,
-            password:encryptedPwd,
-            roles:req.body.roles
-        };
-
-        //console.log("Password after encrypt: "+encryptedPwd);
-
-        //adding
-        model.addUsers(user,function(err,data){
-            if(err){
-                res.json({message:"Error Occured when adding user in table"});
-            }
-            else{
-                res.json({
-                    message:"User Added",
-                    Details: data
-                    
-                })
-            }
-        });
-
-
-    }).catch(err=>{
-        console.log("Error happens at Encryption");
-        console.error(err)
-    })
-        
+    //adding
+    model.addUsers(user,function(err,data){
+        if(err){
+            res.json({message:"Error Occured when adding user in table"});
+        }
+        else{
+            res.json({
+                message:"User Added",
+                Details: data
+                
+            })
+        }
+    });
 }
 
-
 function getAll(req, res){
-            model.getAllUser(function(err,data){
-                if(err){
-                    res.json({message:"Error Occured when Querying table"});
-                }
-                else{
-                    res.json({
-                        message: `${data.length} Records Found`,
-                        Details: data
-                        
-                    })
-                }
-            });
+    model.getAllUser(function(err,data){
+        if(err){
+            res.json({message:"Error Occured when Querying table"});
         }
+        else{
+            res.json({
+                message: `${data.length} Records Found`,
+                Details: data
+                
+            })
+        }
+    });
+}
 
 
 function getUserByName(req,res){
@@ -96,7 +79,9 @@ function getUserByName(req,res){
             .then(doMatch=>{
                 if(doMatch){
                     //res.send(`Welcome ${user}`);
-                    const token=jwt.sign({id:user},JWTKEY)
+                    const token=jwt.sign({id:user},JWTKEY,{
+                        expiresIn: '5m'
+                    })
                     console.log("Token")
                     console.log(token)
                     res.json({
@@ -116,9 +101,51 @@ function getUserByName(req,res){
     });
 }
 
+
+function changePassword(req,res){
+
+    let user={
+        user_name:req.body.user_name,
+        password:req.body.password
+    };
+  //console.log("Password after encrypt: "+encryptedPwd);
+
+    //adding
+    model.changePwd(user,function(err,data){
+        if(err){
+            res.json({message:"Error Occured when Updating user in table"});
+        }
+        else{
+            res.json({
+                message:"Password Updated",
+                Details: data
+                
+            })
+        }
+    });
+    
+}
+
+function logout(req,res){
+    const token=req.body.token || req.query.token|| req.headers["x-access-token"];
+    blocklist.push(token);
+    auth.removeBlocklist();
+    console.log('Blocklist')
+    console.log(blocklist);
+    res.json({
+        message:"Log out!"
+    })
+    
+}
+
+
+
 module.exports={
+    home,
     createTable,
     signup,
     getAll,
-    getUserByName
+    getUserByName,
+    changePassword,
+    logout
 }
