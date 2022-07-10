@@ -147,9 +147,30 @@ function getUserByName(userName, callback){
 
 }
 
+function changePwd(user,callback){
+    const params={
+        TableName: tableName,
+        Item: user
+    };
+
+    docClient.put(params, function(err,data){
+        if (err) {
+            console.error("Unable to Update User", err);
+            callback(err,data);
+            
+          } else {
+            console.log(`Password Changed for ${user.user_name}`);
+            const details=data.Item;
+            callback(err,details);
+        }
+
+    });
+}
+
 module.exports={
     createTable,
     addUsers,
     getAllUser,
-    getUserByName
+    getUserByName,
+    changePwd
 }
