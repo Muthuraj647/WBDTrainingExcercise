@@ -3,13 +3,13 @@ Training Application
 
 Required Packages
 
-npm init
+    npm init
 
-npm install --save express body-parser
+    npm install --save express body-parser
 
-npm install --save  aws-sdk bcryptjs
+    npm install --save  aws-sdk bcryptjs
 
-npm install --save jsonwebtoke
+    npm install --save jsonwebtoke
 
 API's Exposed:
 
