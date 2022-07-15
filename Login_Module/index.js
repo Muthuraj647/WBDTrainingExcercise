@@ -12,3 +12,5 @@ app.use('/user',route);
 app.listen(PORT,()=>{
     console.log("Application started and Running on Port "+PORT);
 });
+
+module.exports= app;

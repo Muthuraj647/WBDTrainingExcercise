@@ -11,6 +11,10 @@ Required Packages
 
     npm install --save jsonwebtoke
 
+jest testing tool:
+
+    npm install --save-dev jest
+
 API's Exposed:
 
     Public API's:

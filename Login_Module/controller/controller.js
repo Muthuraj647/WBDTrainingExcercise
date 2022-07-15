@@ -1,6 +1,6 @@
 const express=require('express');
 const bcrypt=require('bcryptjs');
-const model=require('../model/dynamoDB');
+const model=require('../service/dynamoDB');
 const jwt=require('jsonwebtoken');
 const secrets=require('../vault');
 const JWTKEY=secrets.secret.JWTKEY_NODEJS;
@@ -39,9 +39,11 @@ function signup(req,res){
     //adding
     model.addUsers(user,function(err,data){
         if(err){
-            res.json({message:"Error Occured when adding user in table"});
+            res.status(500)
+            res.json({message:"Internal Server Error"});
         }
         else{
+            res.status(201);
             res.json({
                 message:"User Added",
                 Details: data
@@ -54,9 +56,11 @@ function signup(req,res){
 function getAll(req, res){
     model.getAllUser(function(err,data){
         if(err){
-            res.json({message:"Error Occured when Querying table"});
+            res.status(500)
+            res.json({message:"Internal Server Error"});
         }
         else{
+            res.status(200)
             res.json({
                 message: `${data.length} Records Found`,
                 Details: data
@@ -74,29 +78,40 @@ function getUserByName(req,res){
     
     model.getUserByName(user, function(err,data){
         if(!err){
-            let encryptedPwd=data[0].password;
+            let encryptedPwd=data.password;
+            //console.log(encryptedPwd)
             bcrypt.compare(password,encryptedPwd)
             .then(doMatch=>{
                 if(doMatch){
                     //res.send(`Welcome ${user}`);
-                    const token=jwt.sign({id:user},JWTKEY,{
+                    let token=jwt.sign({id:user},JWTKEY,{
                         expiresIn: '5m'
                     })
+                    token="Bearer "+token;
                     console.log("Token")
                     console.log(token)
+                    res.status(200)
                     res.json({
-                        message:`Welcome ${user} Please Keep JWT Token`,
+                        message:`Welcome ${data.user_namer} Please Keep JWT Token`,
                         Token: token
                     })
                 }
                 else{
-                    res.send("Wrong credentials")
+                    res.status(401)
+                    res.send({message:"Invalid Password"})
                 }
             }).catch(err=>{
+                res.status(500)
+                res.json({message:"Internal Server Error"});
                 console.log("Internal Error with Decryption")
                 console.log(err);
             })
             
+        }
+        else{
+            res.status(err)
+            res.json({
+                message:"Invalid Username"})
         }
     });
 }
@@ -113,6 +128,7 @@ function changePassword(req,res){
     //adding
     model.changePwd(user,function(err,data){
         if(err){
+            res.status(500)
             res.json({message:"Error Occured when Updating user in table"});
         }
         else{
