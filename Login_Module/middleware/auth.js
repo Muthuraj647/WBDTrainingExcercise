@@ -6,9 +6,9 @@ let blocklist=secrets.secret.JWTblocklist;
 
 
 function verifyToken(req,res,next){
-    const token=req.body.token || req.query.token|| req.headers["x-access-token"];
+    let token=req.body.token || req.query.token|| req.headers["x-access-token"];
 
-    if(!token){
+    if(!token || !token.startsWith("Bearer")){
         return res.status(503).send("You're not authorized to Access this API");
     }
 
@@ -16,11 +16,19 @@ function verifyToken(req,res,next){
     {
         return res.send("Token Blacklisted... login again to get new");
     }
+    
     try {
-        
+        token=token.substr(7);
+        console.log(token)
         const decodedData=jwt.verify(token,JWTKEY);
         req.user_name=decodedData.id;
     } catch (error) {
+       
+        if(error.expiredAt)
+        {
+            console.log("Token Expired")
+            return res.status(408).send("Token Expired Please Login Agin")
+        }
         return res.status(401).send("Invalid token");
     }
     return next();

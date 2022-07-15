@@ -1,4 +1,7 @@
-const secret={ JWTKEY_NODEJS:"secretKey", JWTblocklist:[]}
+const secret={ 
+    JWTKEY_NODEJS:"secretKey",
+    JWTblocklist:[]
+    }
 
 
 module.exports={
