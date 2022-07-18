@@ -1,5 +1,5 @@
 # WBD-Training
-Training Application
+Training Application | Login Module | Express JS
 
 Required Packages
 

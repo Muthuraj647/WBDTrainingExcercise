@@ -6,7 +6,7 @@ aws.config.update({
 
 const dynamoDB=new aws.DynamoDB();
 const docClient=new aws.DynamoDB.DocumentClient();
-const tableName= "test_table";
+const tableName= "Users";
 
 //create table
 
@@ -122,15 +122,15 @@ function getAllUser(callback){
 
 //getUser
 
-function getUserByName(userName, callback){
+function getUserByName(user, callback){
 
     const params={
         TableName: tableName,
         KeyConditionExpression: "user_name =:name",
         ExpressionAttributeValues:{
-            ":name":userName
+            ":name":user.user_name
         },
-        ProjectionExpression: "user_name, password"
+        ProjectionExpression: "user_name, password, user_roles"
     };
 
     docClient.query(params, function(err,data){
@@ -140,7 +140,11 @@ function getUserByName(userName, callback){
         }
         else if(data.Count!=0){
             console.log("Found the User ")
-            callback(err,data.Items[0]);
+            console.log("Roles")
+            console.log(data.Items[0].user_roles)
+            callback(err,data.Items[0]);  
+
+            //callback(401,null);
         }
         else{
             callback(404,null);

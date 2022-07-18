@@ -32,7 +32,7 @@ function signup(req,res){
         user_name:req.body.user_name,
         email:req.body.email,
         password:req.body.password,
-        roles:req.body.roles
+        user_roles:req.body.user_roles
     };
   //console.log("Password after encrypt: "+encryptedPwd);
 
@@ -72,19 +72,21 @@ function getAll(req, res){
 
 
 function getUserByName(req,res){
-
-    let user=req.body.user_name;
-    let password=req.body.password;
+    let userObj={
+        user_name:req.body.user_name,
+        password:req.body.password,
+        user_role:req.body.user_roles
+    }
     
-    model.getUserByName(user, function(err,data){
+    model.getUserByName(userObj, function(err,data){
         if(!err){
             let encryptedPwd=data.password;
             //console.log(encryptedPwd)
-            bcrypt.compare(password,encryptedPwd)
+            bcrypt.compare(userObj.password,encryptedPwd)
             .then(doMatch=>{
                 if(doMatch){
                     //res.send(`Welcome ${user}`);
-                    let token=jwt.sign({id:user},JWTKEY,{
+                    let token=jwt.sign({id:userObj.user,role:userObj.user_role},JWTKEY,{
                         expiresIn: '5m'
                     })
                     token="Bearer "+token;
