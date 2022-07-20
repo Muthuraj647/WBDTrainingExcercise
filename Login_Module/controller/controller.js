@@ -86,7 +86,7 @@ function getUserByName(req,res){
             .then(doMatch=>{
                 if(doMatch){
                     //res.send(`Welcome ${user}`);
-                    let token=jwt.sign({id:userObj.user,role:userObj.user_role},JWTKEY,{
+                    let token=jwt.sign({name:userObj.user_name,role:userObj.user_role},JWTKEY,{
                         expiresIn: '5m'
                     })
                     token="Bearer "+token;
@@ -94,7 +94,7 @@ function getUserByName(req,res){
                     console.log(token)
                     res.status(200)
                     res.json({
-                        message:`Welcome ${data.user_namer} Please Keep JWT Token`,
+                        message:`Welcome ${data.user_name} Please Keep JWT Token`,
                         Token: token
                     })
                 }
