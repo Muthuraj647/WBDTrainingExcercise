@@ -21,9 +21,9 @@ function verifyToken(req,res,next){
         token=token.substr(7);
         console.log(token)
         const decodedData=jwt.verify(token,JWTKEY);
-        req.user_name=decodedData.id;
+        req.user_name=decodedData.name;
         req.user_role=decodedData.role;
-        console.log("From token "+decodedData.role)
+        console.log("From token "+decodedData.name+" and "+decodedData.role)
     } catch (error) {
        
         if(error.expiredAt)
