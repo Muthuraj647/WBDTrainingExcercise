@@ -20,6 +20,10 @@ func ConnectWithDB() (*gorm.DB, error) {
 	}
 	log.Println("Connected With DB...")
 	movies := model.Movies{}
-	conn.AutoMigrate(&movies)
+	shows := model.Show{}
+	screenPlay := model.ScreenPlay{}
+	seasons := model.Season{}
+	episodes := model.Episode{}
+	conn.AutoMigrate(&movies, &shows, &screenPlay, &seasons, &episodes)
 	return conn, err
 }

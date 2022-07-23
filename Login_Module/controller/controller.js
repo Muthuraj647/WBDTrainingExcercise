@@ -87,7 +87,7 @@ function getUserByName(req,res){
                 if(doMatch){
                     //res.send(`Welcome ${user}`);
                     let token=jwt.sign({name:userObj.user_name,role:userObj.user_role},JWTKEY,{
-                        expiresIn: '5m'
+                        expiresIn: '20m'
                     })
                     token="Bearer "+token;
                     console.log("Token")
