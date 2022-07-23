@@ -1,8 +1,8 @@
 package middleware
 
 import (
-	"fmt"
 	"net/http"
+	"strings"
 
 	"github.com/Muthuraj647/WBDTrainingExcercise/CMS/model"
 	"github.com/golang-jwt/jwt"
@@ -11,13 +11,15 @@ import (
 func VerifyLogin(f http.HandlerFunc) http.HandlerFunc {
 
 	return func(w http.ResponseWriter, r *http.Request) {
-		tokenstr := r.URL.Query()["token"]
+		token := r.URL.Query()["token"]
 
-		if tokenstr != nil {
+		tokenstr := strings.Split(token[0], " ")
+
+		if len(tokenstr) == 2 && tokenstr[0] == "Bearer" && tokenstr[1] != "" {
 
 			claims := &model.Claims{}
 			jwtKey := []byte("secretKey")
-			tkn, err := jwt.ParseWithClaims(tokenstr[0], claims, func(t *jwt.Token) (interface{}, error) {
+			tkn, err := jwt.ParseWithClaims(tokenstr[1], claims, func(t *jwt.Token) (interface{}, error) {
 				return jwtKey, nil
 			})
 
@@ -38,8 +40,8 @@ func VerifyLogin(f http.HandlerFunc) http.HandlerFunc {
 				return
 			}
 
-			fmt.Println("Username")
-			fmt.Println(claims.Name)
+			//fmt.Println("Username")
+			//fmt.Println(claims.Name)
 
 			if claims.Role == "CMS" {
 				f(w, r)
@@ -49,7 +51,7 @@ func VerifyLogin(f http.HandlerFunc) http.HandlerFunc {
 			}
 
 		}
-		w.Write([]byte("Token Missing "))
+		w.Write([]byte("Token Missing or Invalid Token"))
 
 	}
 
