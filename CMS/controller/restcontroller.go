@@ -7,6 +7,7 @@ import (
 	"strconv"
 
 	"github.com/Muthuraj647/WBDTrainingExcercise/CMS/model"
+	"github.com/Muthuraj647/WBDTrainingExcercise/CMS/pagination"
 	"github.com/Muthuraj647/WBDTrainingExcercise/CMS/service"
 )
 
@@ -42,8 +43,17 @@ func InsertMovie(w http.ResponseWriter, r *http.Request) {
 }
 
 func GetAllMovies(w http.ResponseWriter, r *http.Request) {
-	movies := service.GetAllMovies()
-	if movies == nil {
+	limit, er := strconv.Atoi(r.URL.Query()["limit"][0])
+	page, er1 := strconv.Atoi(r.URL.Query()["page"][0])
+
+	if er != nil || er1 != nil {
+		fmt.Println("Error")
+	}
+	var paginate = pagination.Pagination{}
+	paginate.Limit = limit
+	paginate.Page = page
+	movies, err := service.GetAllMovies(paginate)
+	if movies == nil || err != nil {
 		w.Write([]byte("No movies found or Error Happened"))
 	}
 	json.NewEncoder(w).Encode(movies)
@@ -123,7 +133,16 @@ func InsertShow(w http.ResponseWriter, r *http.Request) {
 //getAll
 
 func GetAllShows(w http.ResponseWriter, r *http.Request) {
-	shows, err := service.GetaAllShows()
+	limit, er := strconv.Atoi(r.URL.Query()["limit"][0])
+	page, er1 := strconv.Atoi(r.URL.Query()["page"][0])
+
+	if er != nil || er1 != nil {
+		fmt.Println("Error")
+	}
+	var paginate = pagination.Pagination{}
+	paginate.Limit = limit
+	paginate.Page = page
+	shows, err := service.GetaAllShows(paginate)
 	if err != nil {
 		w.Write([]byte("Problem with GetAll Shows"))
 		w.WriteHeader(http.StatusNoContent)
@@ -209,7 +228,16 @@ func InsertSeason(w http.ResponseWriter, r *http.Request) {
 //getAll
 
 func GetAllSeasons(w http.ResponseWriter, r *http.Request) {
-	season, err := service.GetaAllSeason()
+	limit, er := strconv.Atoi(r.URL.Query()["limit"][0])
+	page, er1 := strconv.Atoi(r.URL.Query()["page"][0])
+
+	if er != nil || er1 != nil {
+		fmt.Println("Error")
+	}
+	var paginate = pagination.Pagination{}
+	paginate.Limit = limit
+	paginate.Page = page
+	season, err := service.GetaAllSeason(paginate)
 	if err != nil {
 		w.Write([]byte("Problem with GetAll season"))
 		w.WriteHeader(http.StatusNoContent)
@@ -295,7 +323,16 @@ func InsertEpisode(w http.ResponseWriter, r *http.Request) {
 //getAll
 
 func GetAllEpisode(w http.ResponseWriter, r *http.Request) {
-	episode, err := service.GetaAllEpisode()
+	limit, er := strconv.Atoi(r.URL.Query()["limit"][0])
+	page, er1 := strconv.Atoi(r.URL.Query()["page"][0])
+
+	if er != nil || er1 != nil {
+		fmt.Println("Error")
+	}
+	var paginate = pagination.Pagination{}
+	paginate.Limit = limit
+	paginate.Page = page
+	episode, err := service.GetaAllEpisode(paginate)
 	if err != nil {
 		w.Write([]byte("Problem with GetAll episode"))
 		w.WriteHeader(http.StatusNoContent)
