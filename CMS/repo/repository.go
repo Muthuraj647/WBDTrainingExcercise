@@ -2,8 +2,10 @@ package repo
 
 import (
 	"log"
+	"math"
 
 	"github.com/Muthuraj647/WBDTrainingExcercise/CMS/model"
+	"github.com/Muthuraj647/WBDTrainingExcercise/CMS/pagination"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 )
@@ -26,4 +28,17 @@ func ConnectWithDB() (*gorm.DB, error) {
 	episodes := model.Episode{}
 	conn.AutoMigrate(&movies, &shows, &screenPlay, &seasons, &episodes)
 	return conn, err
+}
+
+//pagination
+
+func Paginate(value interface{}, pagination *pagination.Pagination, db *gorm.DB) func(db *gorm.DB) *gorm.DB {
+	var totalRows int64
+	db.Model(value).Count(&totalRows)
+	pagination.TotalRows = totalRows
+	totalPages := int(math.Ceil(float64(totalRows) / float64(pagination.Limit)))
+	pagination.TotalPages = totalPages
+	return func(db *gorm.DB) *gorm.DB {
+		return db.Offset(pagination.GetOffset()).Limit(pagination.GetLimit())
+	}
 }

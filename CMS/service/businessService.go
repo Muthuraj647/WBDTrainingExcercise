@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/Muthuraj647/WBDTrainingExcercise/CMS/model"
+	"github.com/Muthuraj647/WBDTrainingExcercise/CMS/pagination"
 	"github.com/Muthuraj647/WBDTrainingExcercise/CMS/repo"
 	"gorm.io/gorm"
 )
@@ -38,17 +39,24 @@ func InsertMovie(movie model.Movies) error {
 
 //getall
 
-func GetAllMovies() []model.Movies {
-	movies := []model.Movies{}
+// func GetAllMovies() []model.Movies {
+// 	movies := []model.Movies{}
 
-	err := conn.Where("is_active=?", true).Find(&movies)
-	if err.Error != nil {
-		fmt.Println("Error when Querying...")
-		fmt.Println(err.Error)
-		//log.Fatalln(err)
-		return nil
-	}
-	return movies
+// 	err := conn.Where("is_active=?", true).Find(&movies)
+// 	if err.Error != nil {
+// 		fmt.Println("Error when Querying...")
+// 		fmt.Println(err.Error)
+// 		//log.Fatalln(err)
+// 		return nil
+// 	}
+// 	return movies
+// }
+
+func GetAllMovies(pagination pagination.Pagination) (*pagination.Pagination, error) {
+	movies := []model.Movies{}
+	conn.Scopes(repo.Paginate(movies, &pagination, conn)).Find(&movies)
+	pagination.Rows = movies
+	return &pagination, nil
 }
 
 //getById
@@ -121,15 +129,22 @@ func InsertShow(show model.Show) error {
 
 //getAllShows
 
-func GetaAllShows() ([]model.Show, error) {
-	shows := []model.Show{}
-	err := conn.Where("is_active=?", true).Preload("Screenplay").Find(&shows).Error
+// func GetaAllShows() ([]model.Show, error) {
+// 	shows := []model.Show{}
+// 	err := conn.Where("is_active=?", true).Preload("Screenplay").Find(&shows).Error
 
-	if err != nil {
-		fmt.Println("Problem with Querying")
-		return shows, err
-	}
-	return shows, nil
+// 	if err != nil {
+// 		fmt.Println("Problem with Querying")
+// 		return shows, err
+// 	}
+// 	return shows, nil
+// }
+
+func GetaAllShows(pagination pagination.Pagination) (*pagination.Pagination, error) {
+	shows := []model.Show{}
+	conn.Scopes(repo.Paginate(shows, &pagination, conn)).Find(&shows)
+	pagination.Rows = shows
+	return &pagination, nil
 }
 
 //getById
@@ -198,15 +213,22 @@ func InsertSeason(season model.Season) error {
 
 //getAllShows
 
-func GetaAllSeason() ([]model.Season, error) {
-	season := []model.Season{}
-	err := conn.Where("is_active=?", true).Find(&season).Error
+// func GetaAllSeason() ([]model.Season, error) {
+// 	season := []model.Season{}
+// 	err := conn.Where("is_active=?", true).Find(&season).Error
 
-	if err != nil {
-		fmt.Println("Problem with Querying")
-		return season, err
-	}
-	return season, nil
+// 	if err != nil {
+// 		fmt.Println("Problem with Querying")
+// 		return season, err
+// 	}
+// 	return season, nil
+// }
+
+func GetaAllSeason(pagination pagination.Pagination) (*pagination.Pagination, error) {
+	season := []model.Season{}
+	conn.Scopes(repo.Paginate(season, &pagination, conn)).Find(&season)
+	pagination.Rows = season
+	return &pagination, nil
 }
 
 //getById
@@ -275,16 +297,16 @@ func InsertEpisode(episode model.Episode) error {
 
 //getAllShows
 
-func GetaAllEpisode() ([]model.Episode, error) {
-	episode := []model.Episode{}
-	err := conn.Where("is_active=?", true).Find(&episode).Error
+// func GetaAllEpisode() ([]model.Episode, error) {
+// 	episode := []model.Episode{}
+// 	err := conn.Where("is_active=?", true).Find(&episode).Error
 
-	if err != nil {
-		fmt.Println("Problem with Querying")
-		return episode, err
-	}
-	return episode, nil
-}
+// 	if err != nil {
+// 		fmt.Println("Problem with Querying")
+// 		return episode, err
+// 	}
+// 	return episode, nil
+// }
 
 //getById
 
@@ -334,4 +356,11 @@ func DeleteEpisode(episodeID int) (error, model.Episode) {
 	fmt.Println("Deleted")
 
 	return nil, episode
+}
+
+func GetaAllEpisode(pagination pagination.Pagination) (*pagination.Pagination, error) {
+	episode := []model.Episode{}
+	conn.Scopes(repo.Paginate(episode, &pagination, conn)).Find(&episode)
+	pagination.Rows = episode
+	return &pagination, nil
 }
