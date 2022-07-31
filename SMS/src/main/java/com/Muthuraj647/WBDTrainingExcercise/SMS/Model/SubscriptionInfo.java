@@ -1,37 +1,38 @@
 package com.Muthuraj647.WBDTrainingExcercise.SMS.Model;
 
+import java.io.Serializable;
 import java.util.List;
+import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 
 @Entity
 @Table (name = "Subscription_info")
 
-public class SubscriptionInfo {
+public class SubscriptionInfo{
 	
 	@Id
 	private int subscription_id;
 	
-	@OneToOne(cascade = CascadeType.ALL)
-	@JoinColumn(name = "member_type")
+	@OneToOne()
+	@JoinColumn(name = "member_id")
 	private MemberType memberType;
 	
-	@OneToOne(cascade = CascadeType.ALL)
-	@JoinColumn(name = "feature")
-	private SubscriptionFeatures features;
+	@OneToMany(mappedBy = "info", fetch = FetchType.LAZY)
+	@JsonIgnoreProperties(value = "info")
+	private List<SubscriptionFeaturesDetails> features;
 
-	public SubscriptionInfo(int subscription_id, MemberType memberType, SubscriptionFeatures features) {
+	public SubscriptionInfo(int subscription_id, MemberType memberType, List<SubscriptionFeaturesDetails> features) {
 		super();
 		this.subscription_id = subscription_id;
 		this.memberType = memberType;
@@ -59,11 +60,11 @@ public class SubscriptionInfo {
 		this.memberType = memberType;
 	}
 
-	public SubscriptionFeatures getFeatures() {
+	public List<SubscriptionFeaturesDetails> getFeatures() {
 		return features;
 	}
 
-	public void setFeatures(SubscriptionFeatures features) {
+	public void setFeatures(List<SubscriptionFeaturesDetails> features) {
 		this.features = features;
 	}
 	
