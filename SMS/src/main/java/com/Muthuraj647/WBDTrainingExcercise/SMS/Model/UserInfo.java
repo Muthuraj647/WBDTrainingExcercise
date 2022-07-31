@@ -1,5 +1,6 @@
 package com.Muthuraj647.WBDTrainingExcercise.SMS.Model;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
@@ -21,6 +22,10 @@ public class UserInfo {
 	@OneToOne
 	@JoinColumn(name = "subscription_id")
 	private SubscriptionInfo info;
+	
+	@OneToOne(cascade = CascadeType.ALL)
+	@JoinColumn(name = "plan_id")
+	private SubscriptionDuration expiration;
 
 	
 	
@@ -29,14 +34,32 @@ public class UserInfo {
 		// TODO Auto-generated constructor stub
 	}
 
-	public UserInfo(String user_name, String name, String email, String user_password, SubscriptionInfo info) {
+	
+
+	public UserInfo(String user_name, String name, String email, String user_password, SubscriptionInfo info,
+			SubscriptionDuration expiration) {
 		super();
 		this.user_name = user_name;
 		this.name = name;
 		this.email = email;
 		this.user_password = user_password;
 		this.info = info;
+		this.expiration = expiration;
 	}
+
+
+	
+	public SubscriptionDuration getExpiration() {
+		return expiration;
+	}
+
+
+
+	public void setExpiration(SubscriptionDuration expiration) {
+		this.expiration = expiration;
+	}
+
+
 
 	public String getUser_name() {
 		return user_name;
