@@ -16,4 +16,10 @@ public interface UserInterface {
 
 	String deleteUser(String user_name);
 
+	UserInfo revokeSubscription(String user_name);
+
+	String getValidity(String user_name);
+
+	List<UserInfo> getValidityWithinPeriod(String date);
+
 }

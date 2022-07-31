@@ -3,6 +3,7 @@ package com.Muthuraj647.WBDTrainingExcercise.SMS.SMSController;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.repository.query.Param;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -45,5 +46,21 @@ public class UserController {
 	@DeleteMapping("/delete/{user_name}")
 	public String deleteUser(@PathVariable String user_name) {
 		return service.deleteUser(user_name);
+	}
+	
+	@PutMapping("/revoke-subscription/{user_name}")
+	public UserInfo revokeSubscription(@PathVariable String user_name) {
+		return service.revokeSubscription(user_name);
+	}
+	
+	@GetMapping("/{user_name}/validity")
+	public String getValidity(@PathVariable String user_name) {
+		return service.getValidity(user_name);
+	}
+	
+	@GetMapping("/validity")
+	public List<UserInfo> getExpiringUsers(@Param("date") String date) {
+		System.out.println("date"+date);
+		return service.getValidityWithinPeriod(date);
 	}
 }
