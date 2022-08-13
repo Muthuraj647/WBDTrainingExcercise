@@ -10,7 +10,7 @@ import (
 	"gorm.io/gorm"
 )
 
-var connectionURL = "root:Admin@123@tcp(127.0.0.1:3306)/WBDContents"
+var connectionURL = "root:Admin@123@tcp(cms-mysql:3306)/WBDContents"
 var err error
 var conn *gorm.DB
 
