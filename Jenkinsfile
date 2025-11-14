@@ -16,5 +16,5 @@ catch( e ){
     throw e
 }
 finally{
-    sh "echo Completed"
+    echo "Completed"
 }
