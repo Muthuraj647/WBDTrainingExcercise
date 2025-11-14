@@ -5,7 +5,7 @@ def projectConfigs = [
 
 try{
   currentBuild.result = 'SUCCESS'
-  stages{
+  node('built-in'){
     stage('Checkout'){
       
     }
