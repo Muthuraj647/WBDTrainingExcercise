@@ -11,3 +11,10 @@ try{
     }
   }
 }
+catch( e ){
+    currentBuild.result = 'FAILURE'
+    throw e
+}
+finally{
+    sh "echo Completed"
+}
