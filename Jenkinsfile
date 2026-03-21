@@ -4,7 +4,7 @@ def checkoutFromGit(configs){
     sh '[! -d .git] || git clean -fdx' //clearing files
     try{
         checkout([$class: 'GitSCM', branches: [[name: "*/${configs.projectGitBranch}"]],
-                  doGenerateSubmoduleConfiguration: false, extension: [[$class: 'CloneOption', timeout: 120], 
+                  doGenerateSubmoduleConfigurations: false, extensions: [[$class: 'CloneOption', timeout: 120], 
                                                                       [$class: 'CheckoutOption', timeout: 120], submoduleCfg: [],
                                                                       userRemoteConfigs: [[crendentialsId: null, url:"${configs.projectGitURL}"]]])
     }catch (e){
