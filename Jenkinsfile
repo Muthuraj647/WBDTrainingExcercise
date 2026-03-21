@@ -32,7 +32,7 @@ def buildMaven(configs){
 def buildNodeJs(configs){
     echo "Building NodeJS Application"
     sh 'npm install'
-    sh 'npm run build'
+    //sh 'npm run build'
 }
 
 def buildGoApp(configs){
