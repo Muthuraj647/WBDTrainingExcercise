@@ -17,10 +17,36 @@ def yamlLint(configs){
     }
 }
 
+def testBuilds(configs){
+    echo "Testing Maven Application"
+    
+}
+
+def buildMaven(configs){
+    echo "Building Maven Application"
+    dir(configs.projectSpringDir){
+        sh 'mvn clean install -DskipTests'
+    }
+}
+
+def buildNodeJs(configs){
+    echo "Building NodeJS Application"
+    sh 'npm install'
+    sh 'npm run build'
+}
+
+def buildGoApp(configs){
+    sh '''go mod tidy
+    go build -o app
+    '''
+}
+
 def WBDConfigs = [
     projectGitBranch        :    "${params.PROJECT_BRANCH}",
     projectGitURL           :    "https://github.com/Muthuraj647/WBDTrainingExcercise",
     projectSpringDir        :    "SMS",
+    projectNodeJsDir        :    "Login_Module",
+    projectGoDir            :    "CMS",
     projectDeploymentDir    :    "kubernetes",
     projectBuildScripts     :     "Scripts"
 ]
@@ -36,15 +62,19 @@ try{
         }
         stage('Test'){
             echo 'Test Stage'
+            testBuilds(WBDConfigs)
         }
         stage('Build-Java'){
             echo "Build stage - Java"
+            buildMaven(WBDConfigs)
         }
         stage('Build - NodeJs'){
             echo "Build stage - NodeJs"
+            buildNodeJs(WBDConfigs)
         }
         stage('Build - Go'){
             echo "Build stage - Go"
+            //buildGoApp(WBDConfigs)
         }
         stage('Static Analysis'){
             echo "Static Analysis Stage"
