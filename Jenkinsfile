@@ -11,6 +11,12 @@ def checkoutFromGit(configs){
     }
 }
 
+def yamlLint(configs){
+    dir(configs.projectDeploymentDir){
+        sh 'yamllint *.yaml'
+    }
+}
+
 def WBDConfigs = [
     projectGitBranch        :    "${params.PROJECT_BRANCH}",
     projectGitURL           :    "https://github.com/Muthuraj647/WBDTrainingExcercise",
@@ -26,7 +32,7 @@ try{
             checkoutFromGit(WBDConfigs)
         }
         stage('YAML Lint Check'){
-            //yamlLint(WBDConfigs)
+            yamlLint(WBDConfigs)
         }
         stage('Test'){
             echo 'Test Stage'
