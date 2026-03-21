@@ -1,3 +1,4 @@
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -23,9 +24,9 @@ spec:
         app: sample-node-app
     spec:
       containers:
-      - image: muthurajrprivaterepo/sample-node-application:v1
-        imagePullPolicy: IfNotPresent
-        name: sample-node-application
-        resources: {}
+        - image: muthurajrprivaterepo/sample-node-application:v1
+          imagePullPolicy: IfNotPresent
+          name: sample-node-application
+          resources: {}
 ---
 
