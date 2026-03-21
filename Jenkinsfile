@@ -21,7 +21,7 @@ def WBDConfigs = [
     projectGitBranch        :    "${params.PROJECT_BRANCH}",
     projectGitURL           :    "https://github.com/Muthuraj647/WBDTrainingExcercise",
     projectSpringDir        :    "SMS",
-    projectDeploymentDir    :    "Kubernetes",
+    projectDeploymentDir    :    "kubernetes",
     projectBuildScripts     :     "Scripts"
 ]
 
