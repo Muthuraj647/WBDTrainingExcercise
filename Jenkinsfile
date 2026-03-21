@@ -1,7 +1,7 @@
 //Defining Configurations
 
 def checkoutFromGit(configs){
-    sh '[! -d .git] || git clean -fdx' //clearing files
+    sh '[ ! -d .git ] || git clean -fdx' //clearing files
     try{
         checkout([$class: 'GitSCM', branches: [[name: "*/${configs.projectGitBranch}"]], userRemoteConfigs: [[url:"${configs.projectGitURL}"]]])
     }catch (e){
