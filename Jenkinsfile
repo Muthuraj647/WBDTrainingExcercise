@@ -5,7 +5,7 @@ def checkoutFromGit(configs){
     try{
         checkout([$class: 'GitSCM', branches: [[name: "*/${configs.projectGitBranch}"]],
                   doGenerateSubmoduleConfigurations: false, extensions: [[$class: 'CloneOption', timeout: 120], 
-                                                                      [$class: 'CheckoutOption', timeout: 120], submoduleCfg: [],
+                                                                      [$class: 'CheckoutOption', timeout: 120]], submoduleCfg: [],
                                                                       userRemoteConfigs: [[crendentialsId: null, url:"${configs.projectGitURL}"]]])
     }catch (e){
         printStackTrace(e)
