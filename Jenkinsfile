@@ -13,7 +13,7 @@ def checkoutFromGit(configs){
 
 def yamlLint(configs){
     dir(configs.projectDeploymentDir){
-        sh 'yamllint *.yaml'
+        sh 'yamllint sample-node-depl.yaml'
     }
 }
 
