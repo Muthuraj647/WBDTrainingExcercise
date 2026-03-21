@@ -1,55 +1,67 @@
-def getBuildType(){
-    def names = "${env.JOB_NAME}".tokenize('/')
-    print (names)
-}
-def checkoutProject(configs){
-    buildType = getBuildType();
-    print(configs.githubBranch)
-   // print(buildType)
+//Defining Configurations
+
+def checkoutFromGit(configs){
+    sh '[! -d .git] || git clean -fdx' //clearing files
+    try{
+        checkout([$class: 'GitSCM', branches: [[name: "*/${configs.projectGitBranch}"]],
+                  doGenerateSubmoduleConfiguration: false, extension: [[$class: 'CloneOption', timeout: 120], 
+                                                                      [$class: 'CheckoutOption', timeout: 120], submoduleCfg: [],
+                                                                      userRemoteConfigs: [[crendentialsId: null, url:"${configs.projectGitURL}"]]])
+    }catch (e){
+        printStackTrace(e)
+        echo "Checkout failed"
+        
+    }
 }
 
-def projectConfigs = [
-    githubBranch      : "${params.PROJECT_BRANCH}",
-    projectPath       : "SMS"
+def WBDConfigs = [
+    projectGitBranch        :    "${params.PROJECT_BRANCH}",
+    projectGitURL           :    "https://github.com/Muthuraj647/WBDTrainingExcercise",
+    projectSpringDir        :    "SMS",
+    projectDeploymentDir    :    "Kubernetes",
+    projectBuildScripts     :     "Scripts"
 ]
 
 try{
-  currentBuild.result = 'SUCCESS'
-  node('built-in'){
-    stage('Checkout'){
-         checkoutProject(projectConfigs)     
+    currentBuild.result = 'SUCCESS'
+    node ('ubuntu-host'){
+        stage('Checkout'){
+            checkoutFromGit(WBDConfigs)
+        }
+        stage('YAML Lint Check'){
+            //yamlLint(WBDConfigs)
+        }
+        stage('Test'){
+            echo 'Test Stage'
+        }
+        stage('Build-Java'){
+            echo "Build stage - Java"
+        }
+        stage('Build - NodeJs'){
+            echo "Build stage - NodeJs"
+        }
+        stage('Build - Go'){
+            echo "Build stage - Go"
+        }
+        stage('Static Analysis'){
+            echo "Static Analysis Stage"
+        }
+        stage('Artificatory Upload'){
+            echo "Jfron Upload"
+        }
+        stage('Docker Build'){
+            echo "Docker Build"
+        }
+        stage('Registry Push'){
+            echo "Registry Push"
+        }
+        stage('Trivy Scan'){
+            echo "Trivy Scan"
+        }
+            
     }
-    stage('YAML Lint Check'){
-        
-    }
-    stage('Test') {
-        
-    }
-    stage('Build'){
-
-        
-    }
-    stage('Static Analysis'){
-        
-    }
-    stage('Code Coverage'){
-        
-    }
-    stage('Artifact Upload'){
-        
-    }
-    stage('Registry Push'){
-        
-    }
-    stage('Docker Image Scan'){
-        
-    }
-  }
-}
-catch( e ){
-    currentBuild.result = 'FAILURE'
-    throw e
-}
-finally{
-    echo "Completed"
+}catch(e){
+    printStackTrace(e)
+    echo "Job failed"
+    currentBuid.result = "FAILURE"
 }
